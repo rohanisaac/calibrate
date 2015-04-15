@@ -32,6 +32,7 @@ class Calibrate:
 		"""
 		if len(args) != 2:
 			print "Not enough arguments"
+			return
 		
 		else:
 			neon_fil = arg[0]
@@ -58,39 +59,22 @@ class Calibrate:
 		data_fit_wn = wl2wn(532.04) - data_a
 		data_exp_wn = np.array([find_neon(i) for i in data_abs])
 		
-		
-		print data_abs
-		print data_exp
-		
+		# mask out data that doesn't match with any reference data
 		dmask = (data_exp == 0)
-		#xx = compress(data_abs, mask_here)
-		#yy = compress(data_exp, mask_here)
-		print dmask
-		xx = [d for d, s in izip(data_abs, dmask) if not s]
-		yy = [d for d, s in izip(data_exp, dmask) if not s]
+		xx = [d for d, s in izip(data_fit_wn, dmask) if not s]
+		yy = [d for d, s in izip(data_exp_wn, dmask) if not s]
 		
-		print xx
-		print yy
-		
-		if np.count_nonzero(data_exp) < len(data_exp):
-			print "Did not find matching neon peaks"
-			print "len:", len(data_exp)
-		else:
-			print "Found matching neon peaks"
-		
-		if len(xx) == 2:
-			print "Not enought values to get any error estimates"
+		if len(xx) < 2:
+			print "Not enough peaks found to calibrate"
+			return
+		else if len(xx) == 2:
+			print "Not enough values to get any error estimates"
 			
-		if len(xx) > 1:
-			slope, intercept, r_value, p_value, std_err = stats.linregress(xx,yy)
-			print "~~~~ Slope, intercept", slope, intercept
+		# fit linear
+		slope, intercept, r_value, p_value, std_err = stats.linregress(xx,yy)
+		print "Slope, intercept", slope, intercept
 		
-		
-		#plot
-		plt.figure(count)
-		plt.plot(dat[:,0],dat[:,1],'r-')
-		#count += 1
-		
+		return
 		
 	def find_neon(self, x, tolerance=10):
 		"""Find the closest neon peak within the given tolerance
