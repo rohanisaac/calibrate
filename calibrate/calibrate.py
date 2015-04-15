@@ -23,7 +23,54 @@ class Calibrate:
 		"""
 		Creates a calibrated data object
 		"""
-		pass
+		# load file, put into spectra, find peaks and fit
+		dat = np.genfromtxt(data_dir + i, delimiter='\t')
+		S = spectra.Spectra(dat[:,0],dat[:,1])
+		# S.find_peaks(limit=4)
+		S.find_peaks()
+		S.build_model()
+		S.fit_data()
+		
+		# output results as txt, convert to numpy array
+		data_strs = S.model.parameters_as_csv(selection="pos",witherrors=False).split('\n')
+		data_a = np.array([i.split(',')[2] for i in data_strs],dtype='double')
+		print data_a
+		
+		# convert to absolute wavenumber
+		data_abs = wl2wn(532.04) - data_a
+		data_exp = np.array([find_neon(i) for i in data_abs])
+		
+		print data_abs
+		print data_exp
+		
+		dmask = (data_exp == 0)
+		#xx = compress(data_abs, mask_here)
+		#yy = compress(data_exp, mask_here)
+		print dmask
+		xx = [d for d, s in izip(data_abs, dmask) if not s]
+		yy = [d for d, s in izip(data_exp, dmask) if not s]
+		
+		print xx
+		print yy
+		
+		if np.count_nonzero(data_exp) < len(data_exp):
+			print "Did not find matching neon peaks"
+			print "len:", len(data_exp)
+		else:
+			print "Found matching neon peaks"
+		
+		if len(xx) == 2:
+			print "Not enought values to get any error estimates"
+			
+		if len(xx) > 1:
+			slope, intercept, r_value, p_value, std_err = stats.linregress(xx,yy)
+			print "~~~~ Slope, intercept", slope, intercept
+		
+		
+		#plot
+		plt.figure(count)
+		plt.plot(dat[:,0],dat[:,1],'r-')
+		#count += 1
 		
 		
 	def find_neon(self, x, tolerance=10):
@@ -57,5 +104,4 @@ class Calibrate:
 			return closest_peak
 		else:
 			return 0
-			
-			
+
