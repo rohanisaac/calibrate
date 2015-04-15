@@ -22,23 +22,42 @@ class Calibrate:
 	def __init__(self, *args):
 		"""
 		Creates a calibrated data object
+		
+		Arguments
+		---------
+		(neon_file, data_file)
+		
+		
+		
 		"""
+		if len(args) != 2:
+			print "Not enough arguments"
+		
+		else:
+			neon_fil = arg[0]
+			data_fil = arg[1]
+			
+		print "Loading neon file..."
 		# load file, put into spectra, find peaks and fit
-		dat = np.genfromtxt(data_dir + i, delimiter='\t')
-		S = spectra.Spectra(dat[:,0],dat[:,1])
+		neon_dat = np.genfromtxt(neon_fil, delimiter='\t')
+		S = spectra.Spectra(neon_dat[:,0],neon_dat[:,1])
 		# S.find_peaks(limit=4)
+		
+		print "Fitting neon data..."
 		S.find_peaks()
 		S.build_model()
 		S.fit_data()
 		
-		# output results as txt, convert to numpy array
-		data_strs = S.model.parameters_as_csv(selection="pos",witherrors=False).split('\n')
-		data_a = np.array([i.split(',')[2] for i in data_strs],dtype='double')
-		print data_a
+		# conglomerate 
+		pos_data_s = S.model.parameters_as_csv(selection="pos",witherrors=False).split('\n')
+		pos_data = np.array([i.split(',')[2] for i in pos_data_s],dtype='double')
+		
+		print "Using peaks at: ", pos_data
 		
 		# convert to absolute wavenumber
-		data_abs = wl2wn(532.04) - data_a
-		data_exp = np.array([find_neon(i) for i in data_abs])
+		data_fit_wn = wl2wn(532.04) - data_a
+		data_exp_wn = np.array([find_neon(i) for i in data_abs])
+		
 		
 		print data_abs
 		print data_exp
