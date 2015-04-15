@@ -67,7 +67,7 @@ class Calibrate:
 		if len(xx) < 2:
 			print "Not enough peaks found to calibrate"
 			return
-		else if len(xx) == 2:
+		elif len(xx) == 2:
 			print "Not enough values to get any error estimates"
 			
 		# fit linear
