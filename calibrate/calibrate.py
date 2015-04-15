@@ -28,15 +28,24 @@ class Calibrate:
 		(neon_file, data_file)
 		
 		
-		
+		Usage
+		-----
+		sys.path.append('spectra')
+		sys.path.append('calibrate')
+		import calibrate as cal
+
+		neon_file = "/path/to/neon.txt"
+		data_file = "/path/to/data.txt"
+
+		cal.Calibrate(neon_file,data_file)
 		"""
 		if len(args) != 2:
 			print "Not enough arguments"
 			return
 		
 		else:
-			neon_fil = arg[0]
-			data_fil = arg[1]
+			neon_fil = args[0]
+			data_fil = args[1]
 			
 		print "Loading neon file..."
 		# load file, put into spectra, find peaks and fit
@@ -56,13 +65,15 @@ class Calibrate:
 		print "Using peaks at: ", pos_data
 		
 		# convert to absolute wavenumber
-		data_fit_wn = wl2wn(532.04) - data_a
-		data_exp_wn = np.array([find_neon(i) for i in data_abs])
+		data_fit_wn = wl2wn(532.04) - pos_data
+		data_exp_wn = np.array([self.find_neon(i) for i in data_fit_wn])
 		
 		# mask out data that doesn't match with any reference data
-		dmask = (data_exp == 0)
+		dmask = (data_exp_wn == 0)
 		xx = [d for d, s in izip(data_fit_wn, dmask) if not s]
 		yy = [d for d, s in izip(data_exp_wn, dmask) if not s]
+		
+		print "Fitting \n%s vs. \n%s" % (xx,yy)
 		
 		if len(xx) < 2:
 			print "Not enough peaks found to calibrate"
