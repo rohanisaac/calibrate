@@ -1,7 +1,11 @@
 # calibrate
-Calibrate Raman signal with Neon peaks, could easily be generalized to other data and other line sources. 
+Calibrate Raman signal (relative wavenumber (1/cm)) using Neon line spectrum. Reference data from CRC Handbook of Chemistry and Physics [1]
+
+Note: Could easily be generalized to other data and other line sources. 
 
 Note: Since only care about peak position, ignore all backgrounds in line spectrum of Neon
+
+
 
 Requires
 --------
@@ -23,3 +27,9 @@ Usage
 
 	calobj = cal.Calibrate(neon_file,data_file,532.04)
 	calobj.write_file("/path/to/calibrated_file.txt")
+	
+References
+----------
+
+CRC Handbook of Chemistry and Physics, 95th Edition. http://www.hbcpnetbase.com/ (Section 10: Atomic, Molecular, and Optical Physics -> Line Spectra of the Elements)
+
