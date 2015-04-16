@@ -23,10 +23,14 @@ class Calibrate:
 		"""
 		Creates a calibrated data object
 		
+		calobj = calibrate.Calibrate(neon_file, data_file, laser_wavelength)
+		
 		Arguments
 		---------
-		(neon_file, data_file)
-		
+		neon_file, data_file (strings)
+			paths of neon calibration and data file to calibrate 
+		laser_wavelength (double)
+			wavelength of raman laser in nm
 		
 		Usage
 		-----
@@ -39,17 +43,20 @@ class Calibrate:
 
 		cal.Calibrate(neon_file,data_file)
 		"""
-		if len(args) != 2:
+		
+		if len(args) != 3:
 			print "Not enough arguments"
 			return
 		
 		else:
 			neon_fil = args[0]
 			data_fil = args[1]
+			self.laser = args[2]
 			
 		print "Loading neon file..."
 		# load file, put into spectra, find peaks and fit
 		neon_dat = np.genfromtxt(neon_fil, delimiter='\t')
+		self.data_dat = np.genfromtxt(data_fil, delimiter='\t')
 		S = spectra.Spectra(neon_dat[:,0],neon_dat[:,1])
 		# S.find_peaks(limit=4)
 		
@@ -65,7 +72,7 @@ class Calibrate:
 		print "Using peaks at: ", pos_data
 		
 		# convert to absolute wavenumber
-		data_fit_wn = wl2wn(532.04) - pos_data
+		data_fit_wn = wl2wn(self.laser) - pos_data
 		data_exp_wn = np.array([self.find_neon(i) for i in data_fit_wn])
 		
 		# mask out data that doesn't match with any reference data
@@ -82,8 +89,8 @@ class Calibrate:
 			print "Not enough values to get any error estimates"
 			
 		# fit linear
-		slope, intercept, r_value, p_value, std_err = stats.linregress(xx,yy)
-		print "Slope, intercept", slope, intercept
+		self.slope, self.intercept, self.r_value, self.p_value, self.std_err = stats.linregress(xx,yy)
+		print "Slope: %s, Intercept: %s" % (self.slope, self.intercept)
 		
 		return
 		
@@ -118,4 +125,23 @@ class Calibrate:
 			return closest_peak
 		else:
 			return 0
-
+			
+	def write_file(self, filename):
+		"""Write a file with the corrected output
+		
+		Arguments
+		---------
+		filename (string)
+			Path to file
+		"""
+		xdat = np.array(self.data_dat[:,0])
+		ydat = np.array(self.data_dat[:,1])
+		
+		xdat_abs = wl2wn(self.laser) - xdat
+		xdat_abs_c = self.slope * xdat_abs + self.intercept
+		xdat_c = wl2wn(self.laser) - xdat_abs_c
+		print xdat
+		print xdat_c
+		print ydat
+		
+		
