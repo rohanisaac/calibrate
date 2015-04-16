@@ -140,8 +140,11 @@ class Calibrate:
 		xdat_abs = wl2wn(self.laser) - xdat
 		xdat_abs_c = self.slope * xdat_abs + self.intercept
 		xdat_c = wl2wn(self.laser) - xdat_abs_c
-		print xdat
-		print xdat_c
-		print ydat
+		
+		with open (filename,'a') as outfile:
+			for x, y in zip(xdat_c,ydat):
+				outfile.write("{}\t{}\n".format(x,y))
+
+
 		
 		
