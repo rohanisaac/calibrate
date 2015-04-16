@@ -12,11 +12,13 @@ Requires
 		
 Usage
 -----
-sys.path.append('spectra') 
-sys.path.append('calibrate') # make sure python can find all the libraries
-import calibrate as cal
 
-neon_file = "/path/to/neon.txt"
-data_file = "/path/to/data.txt"
+	sys.path.append('spectra') 
+	sys.path.append('calibrate') # make sure python can find all the libraries
+	import calibrate as cal
 
-cal.Calibrate(neon_file,data_file)
+	neon_file = "/path/to/neon.txt"
+	data_file = "/path/to/data.txt"
+
+	calobj = cal.Calibrate(neon_file,data_file,532.04)
+	calobj.write_file("/path/to/calibrated_file.txt")
