@@ -12,7 +12,8 @@ Requires
 		
 Usage
 -----
-
+	
+	import sys
 	sys.path.append('spectra') 
 	sys.path.append('calibrate') # make sure python can find all the libraries
 	import calibrate as cal

@@ -142,7 +142,7 @@ class Calibrate:
 		xdat_c = wl2wn(self.laser) - xdat_abs_c
 		
 		with open (filename,'a') as outfile:
-			for x, y in zip(xdat_c,ydat):
+			for x, y in izip(xdat_c,ydat):
 				outfile.write("{}\t{}\n".format(x,y))
 
 
