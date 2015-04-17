@@ -134,6 +134,13 @@ class Calibrate:
 		filename (string)
 			Path to file
 		"""
+		
+		# if folder doesn't exist
+		fdir = os.path.dirname(os.path.abspath(filename))
+		if not os.path.exists(fdir ):
+			print "Creating directory"
+			os.makedirs(fdir)
+		
 		xdat = np.array(self.data_dat[:,0])
 		ydat = np.array(self.data_dat[:,1])
 		
