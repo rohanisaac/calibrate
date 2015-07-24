@@ -1,7 +1,7 @@
 """
 Calibrate class
 -------------
-Calibrate data from Raman spectra using Neon data and spectra class
+Calibrate data from Raman spectra using Neon data and spectra class, see help file for details
 
 @author: Rohan Isaac
 """
