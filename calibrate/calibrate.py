@@ -9,7 +9,6 @@ Calibrate data from Raman spectra using Neon data and spectra class, see help fi
 import os
 import sys
 import numpy as np
-from itertools import izip
 from scipy import stats  # for linear fit
 from helper_functions import *
 sys.path.append('spectra')
@@ -90,10 +89,10 @@ class Calibrate:
 
         # fit linear
         self.slope, \
-			self.intercept, \
-			self.r_value, \
-			self.p_value,
-			self.std_err = stats.linregress(xx, yy)
+            self.intercept, \
+            self.r_value, \
+            self.p_value, \
+            self.std_err = stats.linregress(xx, yy)
         print "Slope: %s, Intercept: %s" % (self.slope, self.intercept)
 
         return
@@ -153,5 +152,5 @@ class Calibrate:
         xdat_c = wl2wn(self.laser) - xdat_abs_c
 
         with open(filename, 'a') as outfile:
-            for x, y in izip(xdat_c, ydat):
+            for x, y in zip(xdat_c, ydat):
                 outfile.write("{}\t{}\n".format(x, y))
