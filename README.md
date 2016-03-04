@@ -1,6 +1,5 @@
 # calibrate
 
-** not working with current spectra class **
 
 Calibrate Raman signal (relative wavenumber (1/cm)) using Neon line spectrum. Reference data from CRC Handbook of Chemistry and Physics [1]
 
@@ -30,6 +29,11 @@ Usage
 
 	calobj = cal.Calibrate(neon_file,data_file,532.04)
 	calobj.write_file("/path/to/calibrated_file.txt")
+
+Todo
+----
+
+1. Use lmfit for linear fit instead of scipy fit. 
 
 References
 ----------

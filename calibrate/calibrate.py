@@ -64,11 +64,15 @@ class Calibrate:
         S.build_model()
         S.fit_data()
 
+        pos_data_l = []
         # conglomerate
-        pos_data_s = S.model.parameters_as_csv(selection="pos", witherrors=False).split('\n')
-        pos_data = np.array([i.split(',')[2] for i in pos_data_s], dtype='double')
+        for lin in S.output_results().split('\n')[:-1]:
+            c1, c2, c3 = lin.split('\t')
+            if c1.endswith('center'):
+                pos_data_l.append(float(c2))
 
-        print "Using peaks at: ", pos_data
+        print "Using peaks at: ", pos_data_l
+        pos_data = np.array(pos_data_l)
 
         # convert to absolute wavenumber
         data_fit_wn = wl2wn(self.laser) - pos_data
@@ -76,8 +80,8 @@ class Calibrate:
 
         # mask out data that doesn't match with any reference data
         dmask = (data_exp_wn == 0)
-        xx = [d for d, s in izip(data_fit_wn, dmask) if not s]
-        yy = [d for d, s in izip(data_exp_wn, dmask) if not s]
+        xx = [d for d, s in zip(data_fit_wn, dmask) if not s]
+        yy = [d for d, s in zip(data_exp_wn, dmask) if not s]
 
         print "Fitting \n%s vs. \n%s" % (xx, yy)
 
